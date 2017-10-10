@@ -12,7 +12,8 @@ namespace PlainUDPSender
         static void Main(string[] args)
         {
             UDPSender udp = new UDPSender(PORT);
-            udp.Start();
+            udp.StartXML();
+
 
             Console.ReadKey();
         }

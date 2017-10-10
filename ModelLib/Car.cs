@@ -6,11 +6,17 @@ using System.Threading.Tasks;
 
 namespace ModelLib
 {
+    [Serializable]
     public class Car
     {
         public String Color { get; set; }
         public String Model { get; set; }
         public int RegNo { get; set; }
+
+        public Car()
+        {
+            
+        }
 
         public Car(String color, String model, int regNo)
         {
