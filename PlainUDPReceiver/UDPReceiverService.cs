@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -22,13 +23,14 @@ namespace PlainUDPReceiver
 
         public void Start()
         {
-            byte[] buffer;
+            IPEndPoint senderEP = new IPEndPoint(IPAddress.Any, 0);
 
             using (UdpClient udp = new UdpClient(PORT))
             {
-                IPEndPoint senderEP = new IPEndPoint(IPAddress.Any, 0); // lige meget, bliver sat senere
+                while (true)
+                { 
 
-                buffer = udp.Receive(ref senderEP); // modtager adresse
+                byte[] buffer = udp.Receive(ref senderEP); 
                 Console.WriteLine($"Datagram lenght : {buffer.Length}");
                 Console.WriteLine($"Sender IP : {senderEP.Address}, Port : {senderEP.Port}");
 
@@ -40,6 +42,8 @@ namespace PlainUDPReceiver
                 byte[] outbuffer = Encoding.ASCII.GetBytes(outStr);
 
                 udp.Send(outbuffer, outbuffer.Length, senderEP);
+
+                }
             }
         }
 
@@ -71,6 +75,38 @@ namespace PlainUDPReceiver
 
                 udp.Send(outbuffer, outbuffer.Length, senderEP);
             }
+
+        }
+
+        public void StartPi()
+        {
+            IPEndPoint senderEP = new IPEndPoint(IPAddress.Any, 0);
+
+            //using (ServiceHost host = new ServiceHost(typeof(CalculatorService))) // this is useless
+            //{
+            //    host.AddServiceEndpoint(typeof(ICalculator), binding1, baseAddress);
+
+                SoapRaspService.Service1Client s = new SoapRaspService.Service1Client(); // add one of the endpoints to here
+
+            using (UdpClient udp = new UdpClient(PORT))
+            {
+                while (true)
+                {
+                    byte[] buffer = udp.Receive(ref senderEP);
+                    Console.WriteLine($"Datagram lenght : {buffer.Length}");
+                    Console.WriteLine($"Sender IP : {senderEP.Address}, Port : {senderEP.Port}");
+
+                    string incStr = Encoding.ASCII.GetString(buffer);
+
+                
+                        s.InsertRawDacData(incStr);
+                        Console.WriteLine("Success : " + incStr);
+
+                    }
+
+                }
+            }
+
         }
     }
 }

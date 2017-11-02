@@ -12,7 +12,7 @@ namespace PlainUDPReceiver
         static void Main(string[] args)
         {
             UDPReceiverService udp = new UDPReceiverService(PORT);
-            udp.StartXML();
+            udp.StartPi();
 
             Console.ReadKey();
 
